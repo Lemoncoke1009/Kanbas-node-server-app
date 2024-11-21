@@ -1,21 +1,20 @@
 import * as dao from "./dao.js";
 export default function CourseRoutes(app) {
-    app.delete("/api/courses/:courseId", (req, res) => {
-        const { courseId } = req.params;
-        dao.deleteCourse(courseId);
-        res.sendStatus(204);
-      });
-    
-  app.get("/api/courses", (req, res) => {
-    console.log(req)
-    const courses = dao.findAllCourses();
-    res.send(courses);
-  });
   app.put("/api/courses/:courseId", (req, res) => {
     const { courseId } = req.params;
     const courseUpdates = req.body;
-    dao.updateCourse(courseId, courseUpdates);
-    res.sendStatus(204);
+    const status = dao.updateCourse(courseId, courseUpdates);
+    res.send(status);
+  });
+
+  app.get("/api/courses", (req, res) => {
+    const courses = dao.findAllCourses();
+    res.send(courses);
+  });
+  app.delete("/api/courses/:courseId", (req, res) => {
+    const { courseId } = req.params;
+    const status = dao.deleteCourse(courseId);
+    res.send(status);
   });
 
 }

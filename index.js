@@ -1,12 +1,12 @@
+import "dotenv/config";
+import session from "express-session";
+import cors from "cors";
 import express from 'express';
 import Hello from "./Hello.js";
 import Lab5 from "./Lab5/index.js";
 import CourseRoutes from "./Kanbas/Courses/routes.js";
-import cors from "cors";
 import UserRoutes from "./Kanbas/Users/routes.js";
-import session from "express-session";
-import "dotenv/config";
-import EnrollmentRoutes from "./Kanbas/Enrollments/routes.js";
+
 
 const app = express();
 
@@ -40,7 +40,7 @@ app.use(express.json());
 
 UserRoutes(app);
 CourseRoutes(app);
-EnrollmentRoutes(app);
+
 Lab5(app);
 Hello(app);
 
