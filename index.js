@@ -15,7 +15,7 @@ const app = express();
 app.use(
   cors({
     credentials: true,
-    origin: process.env.NETLIFY_URL || "https://kanbas-node-server-app-69us.onrender.com",
+    origin: process.env.NETLIFY_URL || "http://localhost:3000",
   })
 );
 const sessionOptions = {
