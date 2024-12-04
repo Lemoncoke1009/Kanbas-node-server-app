@@ -1,8 +1,10 @@
 import mongoose from "mongoose";
+
 const courseSchema = new mongoose.Schema(
  {
    _id: {
-     type: String,  
+     type: String,
+     default: () => 'RS' + Math.floor(Math.random() * 9000 + 1000),  // Generates IDs like RS1234
      required: true
    },
    name: String,
@@ -12,7 +14,7 @@ const courseSchema = new mongoose.Schema(
  },
  { 
    collection: "courses",
-   _id: false  
+   _id: false  // Disable auto-generation of ObjectId
  }
 );
 

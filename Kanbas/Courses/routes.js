@@ -5,8 +5,16 @@ import * as assignmentsDao from "../Assignments/dao.js";
 export default function CourseRoutes(app) {
 
   app.post("/api/courses", async (req, res) => {
-    const course = await dao.createCourse(req.body);
-    res.json(course);
+    try {
+      const course = await dao.createCourse(req.body);
+      res.json(course);
+    } catch (error) {
+      console.error("Error creating course:", error);
+      res.status(500).json({ 
+        message: "Error creating course", 
+        error: error.message 
+      });
+    }
   });
  
   app.post("/api/courses/:courseId/modules", (req, res) => {

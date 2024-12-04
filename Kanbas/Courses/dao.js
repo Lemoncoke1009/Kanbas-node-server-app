@@ -10,9 +10,18 @@ export function findCoursesForEnrolledUser(userId) {
   return enrolledCourses;
 }
 
-export function createCourse(course) {
+export async function createCourse(course) {
+
   const { _id, ...courseData } = course;
-  return model.create(course);
+  
+  try {
+    const newCourse = await model.create(courseData);
+    console.log("Created course:", newCourse);
+    return newCourse;
+  } catch (error) {
+    console.error("Error creating course:", error);
+    throw error;
+  }
 }
 
 
