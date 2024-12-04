@@ -16,9 +16,19 @@ export function createCourse(course) {
 }
 
 
-export function updateCourse(courseId, courseUpdates) {
-  return model.updateOne({ _id: courseId }, { $set: courseUpdates });
- }
+export async function updateCourse(courseId, courseUpdates) {
+  if (!courseId) {
+      throw new Error('Course ID is required');
+  }
+  
+  const { _id, ...updates } = courseUpdates;
+  
+  return model.findByIdAndUpdate(
+      courseId,
+      { $set: updates },
+      { new: true }
+  );
+}
  
 
 export function deleteCourse(courseId) {
