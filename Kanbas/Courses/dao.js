@@ -18,7 +18,6 @@ export function createCourse(course) {
 
 export function updateCourse(courseId, courseUpdates) {
   return model.updateOne({ _id: courseId }, { $set: courseUpdates });
-
  }
  
 
