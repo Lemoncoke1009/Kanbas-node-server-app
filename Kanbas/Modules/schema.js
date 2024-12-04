@@ -3,8 +3,14 @@ const schema = new mongoose.Schema(
   {
     name: String,
     description: String,
-    course: { type: mongoose.Schema.Types.ObjectId, ref: "CourseModel" },
+    course: { 
+      type: String,  
+      ref: "CourseModel" 
+    },
   },
-  { collection: "modules" }
+  { 
+    collection: "modules",
+    timestamps: true
+  }
 );
 export default schema;
