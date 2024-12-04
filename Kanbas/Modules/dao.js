@@ -1,13 +1,11 @@
 import Database from "../Database/index.js";
 
-export function updateCourse(courseId, courseUpdates) {
-  return model.updateOne({ _id: courseId }, { $set: courseUpdates });
-  // const { courses } = Database;
-  // const course = courses.find((course) => course._id === courseId);
-  // Object.assign(course, courseUpdates);
-  // return course;
- }
- 
+export function updateModule(moduleId, moduleUpdates) {
+    const { modules } = Database;
+    const module = modules.find((module) => module._id === moduleId);
+    Object.assign(module, moduleUpdates);
+    return module;
+  }
   
 
 export function deleteModule(moduleId) {
