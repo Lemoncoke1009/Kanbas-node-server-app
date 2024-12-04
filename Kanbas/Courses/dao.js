@@ -1,7 +1,7 @@
 import model from "./model.js";
 
 export function findAllCourses() {
-  return model.find().exec(); 
+  return model.find().lean();
 }
 export function findCoursesForEnrolledUser(userId) {
   const { courses, enrollments } = Database;
@@ -16,9 +16,13 @@ export function createCourse(course) {
 }
 
 
-export async function updateCourse(courseId, courseUpdates) {
+export function updateCourse(courseId, courseUpdates) {
   const { _id, ...updates } = courseUpdates;
-  return model.findByIdAndUpdate(courseId, updates, { new: true });
+  return model.findByIdAndUpdate(
+    courseId,
+    updates,
+    { new: true, runValidators: true }
+  );
 }
  
 

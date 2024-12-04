@@ -8,14 +8,12 @@ const courseSchema = new mongoose.Schema(
  },
  { 
    collection: "courses",
-   toJSON: { virtuals: true },
-   toObject: { virtuals: true },
-   _id: true
+   timestamps: true,
+   toJSON: { 
+     virtuals: true,
+     getters: true
+   }
  }
 );
-
-courseSchema.virtual('id').get(function() {
-  return this._id.toHexString();
-});
 
 export default courseSchema;
