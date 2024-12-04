@@ -5,10 +5,10 @@ export default function ModuleRoutes(app) {
     modulesDao.deleteModule(moduleId);
     res.sendStatus(204);
   });
-  app.put("/api/courses/:courseId", async (req, res) => {
+  app.put("/api/courses/:courseId", (req, res) => {
     const { courseId } = req.params;
     const courseUpdates = req.body;
-    const status = await dao.updateCourse(courseId, courseUpdates);
+    const status = dao.updateCourse(courseId, courseUpdates);
     res.send(status);
   });
  
