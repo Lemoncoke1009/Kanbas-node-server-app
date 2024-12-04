@@ -17,11 +17,19 @@ export function createCourse(course) {
 
 
 export function updateCourse(courseId, courseUpdates) {
+
   const { _id, ...updates } = courseUpdates;
-  return model.findByIdAndUpdate(
-    courseId,
-    updates,
-    { new: true, runValidators: true }
+  
+  console.log("Updating course with ID:", courseId);
+  console.log("Updates:", updates);
+
+  return model.findOneAndUpdate(
+    { _id: courseId },  
+    { $set: updates },
+    { 
+      new: true,
+      runValidators: true 
+    }
   );
 }
  

@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 const courseSchema = new mongoose.Schema(
  {
+   _id: {
+     type: String,  
+     required: true
+   },
    name: String,
    number: String,
    credits: Number,
@@ -8,11 +12,7 @@ const courseSchema = new mongoose.Schema(
  },
  { 
    collection: "courses",
-   timestamps: true,
-   toJSON: { 
-     virtuals: true,
-     getters: true
-   }
+   _id: false  
  }
 );
 
