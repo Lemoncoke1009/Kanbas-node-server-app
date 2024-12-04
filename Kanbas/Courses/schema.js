@@ -6,6 +6,16 @@ const courseSchema = new mongoose.Schema(
    credits: Number,
    description: String,
  },
- { collection: "courses" }
+ { 
+   collection: "courses",
+   toJSON: { virtuals: true },
+   toObject: { virtuals: true },
+   _id: true
+ }
 );
+
+courseSchema.virtual('id').get(function() {
+  return this._id.toHexString();
+});
+
 export default courseSchema;

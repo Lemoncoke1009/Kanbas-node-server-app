@@ -1,7 +1,7 @@
 import model from "./model.js";
 
 export function findAllCourses() {
-  return model.find();
+  return model.find().exec(); 
 }
 export function findCoursesForEnrolledUser(userId) {
   const { courses, enrollments } = Database;
@@ -11,23 +11,14 @@ export function findCoursesForEnrolledUser(userId) {
 }
 
 export function createCourse(course) {
-  delete course._id;
+  const { _id, ...courseData } = course;
   return model.create(course);
 }
 
 
 export async function updateCourse(courseId, courseUpdates) {
-  if (!courseId) {
-      throw new Error('Course ID is required');
-  }
-  
   const { _id, ...updates } = courseUpdates;
-  
-  return model.findByIdAndUpdate(
-      courseId,
-      { $set: updates },
-      { new: true }
-  );
+  return model.findByIdAndUpdate(courseId, updates, { new: true });
 }
  
 
