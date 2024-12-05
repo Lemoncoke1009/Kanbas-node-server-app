@@ -100,9 +100,7 @@ export default function UserRoutes(app) {
     res.json(courses);
   };
   app.get("/api/users/:uid/courses", findCoursesForUser);
-  //Might have to delete below
-
-  //Delete?
+  
   const createCourse = (req, res) => {
     const currentUser = req.session["currentUser"];
     const newCourse = courseDao.createCourse(req.body);

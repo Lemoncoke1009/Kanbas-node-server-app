@@ -54,7 +54,6 @@ export default function CourseRoutes(app) {
   app.get("/api/courses/:cid/users", findUsersForCourse);
  
 
-  //Assignments
   app.get("/api/courses/:courseId/assignments", async (req, res) => {
     const { courseId } = req.params;
     const assignments = await assignmentsDao.findAssignmentsForCourse(courseId);
