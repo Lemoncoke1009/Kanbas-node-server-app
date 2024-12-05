@@ -17,7 +17,7 @@ mongoose.connect(CONNECTION_STRING);
 const app = express();
 
 app.use(cors({
-  origin: ['https://a6--kanbas-react-web-appyifan.netlify.app', 'http://localhost:3000'],
+  origin: ['https://a6rs--kanbas-react-web-appyifan.netlify.app', 'http://localhost:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
