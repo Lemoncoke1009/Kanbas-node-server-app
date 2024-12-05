@@ -5,9 +5,3 @@ export default function EnrollmentRoutes(app) {
       res.send(enrollments);
   });
 }
-  app.delete("/api/courses/:userId/:courseId/unenroll", (req, res) => {
-    const { courseId } = req.params;
-    const { userId } = req.params;
-    dao.unenrollUserInCourse(userId, courseId);
-    res.sendStatus(200);
-  });
