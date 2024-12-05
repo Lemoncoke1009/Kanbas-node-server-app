@@ -4,14 +4,15 @@ export default function ModuleRoutes(app) {
   app.get("/api/courses/:courseId/modules", async (req, res) => {
     try {
       const { courseId } = req.params;
-      console.log("Backend - Finding modules for course:", courseId);
+      console.log("Backend: Looking for modules with courseId:", courseId);
+      
       const modules = await modulesDao.findModulesForCourse(courseId);
-      console.log("Backend - Found modules:", modules);
-
-      res.json(Array.isArray(modules) ? modules : []);
+      console.log("Backend: Found modules:", modules);
+  
+      res.json(modules);
     } catch (error) {
-      console.error("Backend error:", error);
-      res.status(500).json({ message: "Error fetching modules" });
+      console.error("Backend error fetching modules:", error);
+      res.status(500).json({ error: error.message });
     }
   });
 
