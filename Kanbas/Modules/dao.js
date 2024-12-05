@@ -17,27 +17,30 @@ export function deleteModule(moduleId) {
    
 export async function createModule(module) {
   try {
-    const { _id, ...moduleData } = module;
+   
+    const allModules = await model.find({}).sort({ _id: -1 }).limit(1);
     
-    const lastModule = await model.findOne({}, {}, { sort: { '_id': -1 } });
     let nextId;
-    if (lastModule && lastModule._id.startsWith('M')) {
-      const lastNum = parseInt(lastModule._id.slice(1));
-      nextId = `M${String(lastNum + 1).padStart(3, '0')}`;
+    if (allModules.length > 0) {
+      const lastModuleId = allModules[0]._id;
+      const lastNumber = parseInt(lastModuleId.replace('M', ''));
+      nextId = `M${String(lastNumber + 1).padStart(3, '0')}`;
     } else {
-      nextId = 'M101';
+      nextId = 'M401'; 
     }
     
     const newModule = {
       _id: nextId,
-      ...moduleData,
+      name: module.name,
+      description: module.description || "",
+      course: module.course,
       lessons: []
     };
-    
-    const createdModule = await model.create(newModule);
-    return createdModule.toObject();
+
+    console.log("Creating new module with ID:", nextId);
+    return model.create(newModule);
   } catch (error) {
-    console.error("Error creating module:", error);
+    console.error("Error in createModule:", error);
     throw error;
   }
 }

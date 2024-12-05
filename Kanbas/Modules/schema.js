@@ -1,27 +1,31 @@
 import mongoose from "mongoose";
 
-const lessonSchema = new mongoose.Schema({
-  _id: String,
-  name: String,
-  description: String,
-  module: String
-});
-
 const moduleSchema = new mongoose.Schema(
   {
     _id: {
       type: String,
-      default: () => 'M' + Math.floor(Math.random() * 9000 + 1000), // Generates unique IDs like M1234
+      required: true,
+      unique: true
+    },
+    name: {
+      type: String,
       required: true
     },
-    name: String,
     description: String,
-    course: String,
-    lessons: [lessonSchema]
+    course: {
+      type: String,
+      required: true
+    },
+    lessons: [{
+      _id: String,
+      name: String,
+      description: String,
+      module: String
+    }]
   },
   { 
     collection: "modules",
-    _id: false  // Disable auto-generation
+    _id: false
   }
 );
 
