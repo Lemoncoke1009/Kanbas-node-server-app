@@ -1,18 +1,11 @@
 import model from "./model.js";
 
-export async function findModulesForCourse(courseId) {
-  try {
-    console.log("DAO: Finding modules for course:", courseId);
-    const modules = await model.find({ 
-      course: courseId,
-      name: { $exists: true, $ne: "" }  // Filter out empty modules
-    }).lean();
-    console.log("DAO: Found modules:", modules);
-    return modules;
-  } catch (error) {
-    console.error("DAO Error:", error);
-    throw error;
-  }
+export function updateModule(moduleId, moduleUpdates) {
+  return model.findByIdAndUpdate(
+    moduleId, 
+    { $set: moduleUpdates },
+    { new: true, lean: true }
+  ).exec();
 }
   
 
@@ -24,6 +17,7 @@ export function deleteModule(moduleId) {
    
 export async function createModule(module) {
   try {
+
     if (!module.name) {
       throw new Error("Module name is required");
     }
@@ -49,7 +43,18 @@ export async function createModule(module) {
 }
    
   
-  export function findModulesForCourse(courseId) {
-    return model.find({ course: courseId }).lean().exec();
+  export async function findModulesForCourse(courseId) {
+    try {
+      console.log("DAO: Finding modules for course:", courseId);
+      const modules = await model.find({ 
+        course: courseId,
+        name: { $exists: true, $ne: "" }
+      }).lean();
+      console.log("DAO: Found modules:", modules);
+      return modules;
+    } catch (error) {
+      console.error("DAO Error:", error);
+      throw error;
+    }
   }
    
