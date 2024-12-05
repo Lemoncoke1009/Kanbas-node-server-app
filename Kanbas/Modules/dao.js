@@ -22,9 +22,7 @@ export function deleteModule(moduleId) {
   }
    
   
-   export function findModulesForCourse(courseId) {
+  export function findModulesForCourse(courseId) {
     return model.find({ course: courseId }).lean().exec();
-    // const { modules } = Database;
-    // return modules.filter((module) => module.course === courseId);
-   }
+  }
    
