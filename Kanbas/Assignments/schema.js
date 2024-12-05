@@ -1,23 +1,13 @@
 import mongoose from "mongoose";
-
 const schema = new mongoose.Schema(
   {
-    title: { type: String, required: true },
-    course: { 
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "CourseModel",
-      required: true 
-    },
-    description: { type: String, default: "" },
-    dueDate: { type: Date, required: true },
-    availableFrom: { type: Date, required: true },
-    untilDate: { type: Date, required: true },
-    points: { type: Number, required: true, default: 100 }
+    title: String,
+    course: { type: mongoose.Schema.Types.ObjectId, ref: "CourseModel" },
+    desc: String,
+    points: String,
+    due: String,
+    available: String,
   },
-  { 
-    collection: "assignments2",
-    timestamps: true 
-  }
+  { collection: "assignments" }
 );
-
 export default schema;

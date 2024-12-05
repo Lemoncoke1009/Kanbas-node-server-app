@@ -1,25 +1,10 @@
 import mongoose from "mongoose";
-
 const schema = new mongoose.Schema(
   {
-    name: { 
-      type: String, 
-      required: true 
-    },
-    description: { 
-      type: String,
-      default: ""
-    },
-    course: { 
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "CourseModel",
-      required: true 
-    }
+    name: String,
+    description: String,
+    course: { type: mongoose.Schema.Types.ObjectId, ref: "CourseModel" },
   },
-  { 
-    collection: "modules",
-    timestamps: true 
-  }
+  { collection: "modules" }
 );
-
 export default schema;

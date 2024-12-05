@@ -1,95 +1,32 @@
-import model from "./model.js";
-import mongoose from "mongoose";
 
-const toObjectId = (id) => {
-  try {
-    return new mongoose.Types.ObjectId(id);
-  } catch (error) {
-    console.error("Invalid ID format:", id);
-    throw new Error(`Invalid ID format: ${id}`);
-  }
-};
+import model from "./model.js";
+import Database from "../Database/index.js";
 
 export async function findCoursesForUser(userId) {
-  try {
-    const userObjectId = toObjectId(userId);
-    const enrollments = await model.find({ user: userObjectId })
-      .populate("course")
-      .lean();
-    return enrollments.map((enrollment) => enrollment.course);
-  } catch (error) {
-    console.error("Error finding courses for user:", error);
-    throw error;
-  }
+const enrollments = await model.find({ user: userId }).populate("course");
+return enrollments.map((enrollment) => enrollment.course);
 }
-
 export async function findUsersForCourse(courseId) {
-  try {
-    const courseObjectId = toObjectId(courseId);
-    const enrollments = await model.find({ course: courseObjectId })
-      .populate("user")
-      .lean();
-    return enrollments.map((enrollment) => enrollment.user);
-  } catch (error) {
-    console.error("Error finding users for course:", error);
-    throw error;
-  }
+const enrollments = await model.find({ course: courseId }).populate("user");
+return enrollments.map((enrollment) => enrollment.user);
+}
+export function enrollUserInCourse(user, course) {
+return model.create({ user, course });
+}
+export function unenrollUserFromCourse(user, course) {
+return model.deleteOne({ user, course });
 }
 
-export async function enrollUserInCourse(userId, courseId) {
-  try {
-    const userObjectId = toObjectId(userId);
-    const courseObjectId = toObjectId(courseId);
 
-    // Check if enrollment already exists
-    const existing = await model.findOne({ 
-      user: userObjectId, 
-      course: courseObjectId 
-    });
-    
-    if (existing) {
-      throw new Error("User is already enrolled in this course");
-    }
-
-    return await model.create({
-      user: userObjectId,
-      course: courseObjectId,
-      enrollmentDate: new Date(),
-      status: "ENROLLED"
-    });
-  } catch (error) {
-    console.error("Error enrolling user in course:", error);
-    throw error;
-  }
-}
-
-export async function unenrollUserFromCourse(userId, courseId) {
-  try {
-    const userObjectId = toObjectId(userId);
-    const courseObjectId = toObjectId(courseId);
-    
-    const result = await model.deleteOne({ 
-      user: userObjectId, 
-      course: courseObjectId 
-    });
-
-    if (result.deletedCount === 0) {
-      throw new Error("Enrollment not found");
-    }
-
-    return result;
-  } catch (error) {
-    console.error("Error unenrolling user from course:", error);
-    throw error;
-  }
-}
-
-export async function removeEnrollmentsForCourse(courseId) {
-  try {
-    const courseObjectId = toObjectId(courseId);
-    return await model.deleteMany({ course: courseObjectId });
-  } catch (error) {
-    console.error("Error removing enrollments for course:", error);
-    throw error;
-  }
-}
+ export function findAllEnrollments () {
+   return model.find();
+ }
+// export function enrollUserInCourse(userId, courseId) {
+//   const { enrollments } = Database;
+//   enrollments.push({ _id: Date.now(), user: userId, course: courseId });
+// }
+// export function unenrollUserInCourse(userId, courseId) {
+//   const { enrollments } = Database;
+//   Database.enrollments = enrollments.filter((enrollment) => enrollment.user !== userId || enrollment.course !== courseId)
+  
+// }

@@ -1,69 +1,33 @@
+import Database from "../Database/index.js";
 import model from "./model.js";
-import mongoose from "mongoose";
 
-const toObjectId = (id) => {
-  try {
-    return new mongoose.Types.ObjectId(id);
-  } catch (error) {
-    console.error("Invalid ID format:", id);
-    throw new Error(`Invalid ID format: ${id}`);
-  }
-};
-
-export async function findAllCourses() {
-  try {
-    return await model.find().lean();
-  } catch (error) {
-    console.error("Error finding courses:", error);
-    throw error;
-  }
+export function findAllCourses() {
+  return model.find();
 }
 
-export async function createCourse(course) {
-  try {
-    const { _id, ...courseData } = course;
-    return await model.create(courseData);
-  } catch (error) {
-    console.error("Error creating course:", error);
-    throw error;
-  }
+export function findCoursesForEnrolledUser(userId) {
+    const { courses, enrollments } = Database;
+    const enrolledCourses = courses.filter((course) =>
+      enrollments.some((enrollment) => enrollment.user === userId && enrollment.course === course._id));
+    return enrolledCourses;
+}
+export function createCourse(course) {
+  delete course._id;
+  return model.create(course);
+}
+// export function deleteCourse(courseId) {
+//     const { courses, enrollments } = Database;
+//     Database.courses = courses.filter((course) => course._id !== courseId);
+//     Database.enrollments = enrollments.filter(
+//     (enrollment) => enrollment.course !== courseId
+// );}
+// May need to delete the enrollments for that course too
+export function deleteCourse(courseId) {
+  return model.deleteOne({ _id: courseId });
+ }
+ 
+export function updateCourse(courseId, courseUpdates) {
+    return model.updateOne({ _id: courseId }, { $set: courseUpdates });
 }
 
-export async function deleteCourse(courseId) {
-  try {
-    const id = toObjectId(courseId);
-    return await model.deleteOne({ _id: id });
-  } catch (error) {
-    console.error("Error deleting course:", error);
-    throw error;
-  }
-}
-
-export async function updateCourse(courseId, courseUpdates) {
-  try {
-    const id = toObjectId(courseId);
-    const { _id, ...updates } = courseUpdates;
-    return await model.findByIdAndUpdate(
-      id,
-      { $set: updates },
-      { new: true, runValidators: true }
-    );
-  } catch (error) {
-    console.error("Error updating course:", error);
-    throw error;
-  }
-}
-
-export async function findCourseById(courseId) {
-  try {
-    const id = toObjectId(courseId);
-    const course = await model.findById(id).lean();
-    if (!course) {
-      throw new Error(`Course not found with ID: ${courseId}`);
-    }
-    return course;
-  } catch (error) {
-    console.error("Error finding course:", error);
-    throw error;
-  }
-}
+  
