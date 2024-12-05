@@ -1,11 +1,23 @@
+// In your enrollment schema.js
 import mongoose from "mongoose";
 const enrollmentSchema = new mongoose.Schema(
  {
-   course: { type: mongoose.Schema.Types.ObjectId, ref: "CourseModel" },
-   user:   { type: mongoose.Schema.Types.ObjectId, ref: "UserModel"   },
+   course: { 
+     type: String,  
+     ref: "CourseModel",
+     required: true
+   },
+   user: { 
+     type: String,  
+     ref: "UserModel",
+     required: true
+   },
    grade: Number,
    letterGrade: String,
-   enrollmentDate: Date,
+   enrollmentDate: {
+     type: Date,
+     default: Date.now
+   },
    status: {
      type: String,
      enum: ["ENROLLED", "DROPPED", "COMPLETED"],
