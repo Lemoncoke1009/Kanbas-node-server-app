@@ -11,4 +11,3 @@ export default function EnrollmentRoutes(app) {
     dao.unenrollUserInCourse(userId, courseId);
     res.sendStatus(200);
   });
-}
