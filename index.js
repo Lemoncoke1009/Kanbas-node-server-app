@@ -41,6 +41,5 @@ CourseRoutes(app);
 ModuleRoutes(app);
 AssignmentRoutes(app);
 EnrollmentsRoutes(app);
-// May have to add env file with PORT???
 app.listen(process.env.PORT || 4000);
 
