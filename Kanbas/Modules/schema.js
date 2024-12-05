@@ -7,26 +7,22 @@ const lessonSchema = new mongoose.Schema({
   module: String
 });
 
-const schema = new mongoose.Schema(
+const moduleSchema = new mongoose.Schema(
   {
     _id: {
-      type: String,  
-      required: true,
-      auto: false  
+      type: String,
+      default: () => 'M' + Math.floor(Math.random() * 9000 + 1000), // Generates unique IDs like M1234
+      required: true
     },
     name: String,
     description: String,
-    course: {
-      type: String,
-      required: true
-    },
+    course: String,
     lessons: [lessonSchema]
   },
   { 
     collection: "modules",
-    _id: false,  
-    timestamps: true
+    _id: false  // Disable auto-generation
   }
 );
 
-export default schema;
+export default moduleSchema;
