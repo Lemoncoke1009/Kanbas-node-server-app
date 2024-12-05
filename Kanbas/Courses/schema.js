@@ -1,21 +1,20 @@
 import mongoose from "mongoose";
 
 const courseSchema = new mongoose.Schema(
- {
-   _id: {
-     type: String,
-     default: () => 'RS' + Math.floor(Math.random() * 9000 + 1000),  // Generates IDs like RS1234
-     required: true
-   },
-   name: String,
-   number: String,
-   credits: Number,
-   description: String,
- },
- { 
-   collection: "courses",
-   _id: false  // Disable auto-generation of ObjectId
- }
+  {
+    _id: {
+      type: mongoose.Schema.Types.ObjectId,
+      auto: true
+    },
+    name: { type: String, required: true },
+    number: { type: String, required: true, unique: true },
+    credits: { type: Number, required: true, default: 3 },
+    description: { type: String, default: "" }
+  },
+  { 
+    collection: "courses",
+    timestamps: true
+  }
 );
 
 export default courseSchema;

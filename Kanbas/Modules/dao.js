@@ -1,60 +1,85 @@
 import model from "./model.js";
+import mongoose from "mongoose";
 
-export function updateModule(moduleId, moduleUpdates) {
-  return model.findByIdAndUpdate(
-    moduleId, 
-    { $set: moduleUpdates },
-    { new: true, lean: true }
-  ).exec();
-}
-  
-
-export function deleteModule(moduleId) {
-  return model.deleteOne({ _id: moduleId }).exec();
-}
-   
-
-   
-export async function createModule(module) {
+const toObjectId = (id) => {
   try {
-   
-    const allModules = await model.find({}).sort({ _id: -1 }).limit(1);
-    
-    let nextId;
-    if (allModules.length > 0) {
-      const lastModuleId = allModules[0]._id;
-      const lastNumber = parseInt(lastModuleId.replace('M', ''));
-      nextId = `M${String(lastNumber + 1).padStart(3, '0')}`;
-    } else {
-      nextId = 'M401'; 
-    }
-    
-    const newModule = {
-      _id: nextId,
-      name: module.name,
-      description: module.description || "",
-      course: module.course,
-      lessons: []
-    };
-
-    console.log("Creating new module with ID:", nextId);
-    return model.create(newModule);
+    return new mongoose.Types.ObjectId(id);
   } catch (error) {
-    console.error("Error in createModule:", error);
-    throw error;
+    console.error("Invalid ID format:", id);
+    throw new Error(`Invalid ID format: ${id}`);
   }
-}
-   
-  
+};
+
 export async function findModulesForCourse(courseId) {
   try {
-    console.log("DAO: Finding modules for course:", courseId);
-    const modules = await model.find({ course: courseId }).lean();
-    console.log("DAO: Found modules:", modules);
-    return modules;
+    const courseObjectId = toObjectId(courseId);
+    return await model.find({ course: courseObjectId })
+      .sort({ createdAt: 1 })
+      .lean();
   } catch (error) {
-    console.error("DAO Error:", error);
+    console.error("Error finding modules:", error);
     throw error;
   }
 }
-   
+
+export async function createModule(module) {
+  try {
+    if (!module.course) {
+      throw new Error("Course ID is required");
+    }
+
+    const courseObjectId = toObjectId(module.course);
+    const newModule = {
+      ...module,
+      course: courseObjectId
+    };
+    delete newModule._id;
+
+    return await model.create(newModule);
+  } catch (error) {
+    console.error("Error creating module:", error);
+    throw error;
+  }
+}
+
+export async function deleteModule(moduleId) {
+  try {
+    const id = toObjectId(moduleId);
+    const result = await model.deleteOne({ _id: id });
+    
+    if (result.deletedCount === 0) {
+      throw new Error("Module not found");
+    }
+    
+    return result;
+  } catch (error) {
+    console.error("Error deleting module:", error);
+    throw error;
+  }
+}
+
+export async function updateModule(moduleId, moduleUpdates) {
+  try {
+    const id = toObjectId(moduleId);
+    
+    // If course ID is being updated, convert it to ObjectId
+    if (moduleUpdates.course) {
+      moduleUpdates.course = toObjectId(moduleUpdates.course);
+    }
+
+    const updatedModule = await model.findByIdAndUpdate(
+      id,
+      { $set: moduleUpdates },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedModule) {
+      throw new Error("Module not found");
+    }
+
+    return updatedModule;
+  } catch (error) {
+    console.error("Error updating module:", error);
+    throw error;
+  }
+}

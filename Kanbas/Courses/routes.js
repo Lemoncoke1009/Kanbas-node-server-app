@@ -4,6 +4,14 @@ import * as assignmentsDao from "../Assignments/dao.js";
 import * as enrollmentsDao from "../Enrollments/dao.js";
 
 export default function CourseRoutes(app) {
+  app.get("/api/courses", async (req, res) => {
+    try {
+      const courses = await dao.findAllCourses();
+      res.json(courses);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
 
   app.post("/api/courses", async (req, res) => {
     try {
@@ -12,90 +20,95 @@ export default function CourseRoutes(app) {
       if (currentUser) {
         await enrollmentsDao.enrollUserInCourse(currentUser._id, course._id);
       }
-   
       res.json(course);
     } catch (error) {
-      console.error("Error creating course:", error);
-      res.status(500).json({ 
-        message: "Error creating course", 
-        error: error.message 
-      });
+      res.status(500).json({ message: error.message });
     }
   });
-  
- 
-  app.post("/api/courses/:courseId/modules", (req, res) => {
-    const { courseId } = req.params;
-    const module = {
-      ...req.body,
-      course: courseId,
-    };
-    const newModule = modulesDao.createModule(module);
-    res.send(newModule);
+
+  app.get("/api/courses/:courseId/modules", async (req, res) => {
+    try {
+      const { courseId } = req.params;
+      const course = await dao.findCourseById(courseId);
+      const modules = await modulesDao.findModulesForCourse(course._id);
+      res.json(modules);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/courses/:courseId/modules", async (req, res) => {
+    try {
+      const { courseId } = req.params;
+      const course = await dao.findCourseById(courseId);
+      const module = {
+        ...req.body,
+        course: course._id,
+      };
+      const newModule = await modulesDao.createModule(module);
+      res.json(newModule);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.delete("/api/courses/:courseId", async (req, res) => {
+    try {
+      const { courseId } = req.params;
+      const status = await dao.deleteCourse(courseId);
+      await enrollmentsDao.removeEnrollmentsForCourse(courseId);
+      res.json(status);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
   });
 
   app.put("/api/courses/:courseId", async (req, res) => {
     try {
-        const { courseId } = req.params;
-        const courseUpdates = req.body;
-        
-        console.log("Received update request for course:", courseId);
-        console.log("Update data:", courseUpdates);
-
-        const updatedCourse = await dao.updateCourse(courseId, courseUpdates);
-        
-        if (!updatedCourse) {
-            return res.status(404).json({ message: "Course not found" });
-        }
-        
-        res.json(updatedCourse);
+      const { courseId } = req.params;
+      const updatedCourse = await dao.updateCourse(courseId, req.body);
+      if (!updatedCourse) {
+        return res.status(404).json({ message: "Course not found" });
+      }
+      res.json(updatedCourse);
     } catch (error) {
-        console.error("Error updating course:", error);
-        res.status(500).json({ 
-            message: "Error updating course", 
-            error: error.message 
-        });
+      res.status(500).json({ message: error.message });
     }
-});
-
-  app.get("/api/courses", async (req, res) => {
-    const courses = await dao.findAllCourses();
-    res.send(courses);
-  });
-  app.delete("/api/courses/:courseId", async (req, res) => {
-    const { courseId } = req.params;
-    const status = await dao.deleteCourse(courseId);
-    res.send(status);
   });
 
-  app.get("/api/courses/:courseId/modules", (req, res) => {
-    const { courseId } = req.params;
-    const modules = modulesDao.findModulesForCourse(courseId);
-    res.json(modules);
+  app.get("/api/courses/:courseId/assignments", async (req, res) => {
+    try {
+      const { courseId } = req.params;
+      const course = await dao.findCourseById(courseId);
+      const assignments = await assignmentsDao.findAssignmentsForCourse(course._id);
+      res.json(assignments);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
   });
 
-  app.get("/api/courses/:courseId/assignments", (req, res) => {
-    const { courseId } = req.params;
-    const assignments = assignmentsDao.findAssignmentsForCourse(courseId);
-    res.json(assignments);
+  app.post("/api/courses/:courseId/assignments", async (req, res) => {
+    try {
+      const { courseId } = req.params;
+      const course = await dao.findCourseById(courseId);
+      const assignment = {
+        ...req.body,
+        course: course._id,
+      };
+      const newAssignment = await assignmentsDao.createAssignment(assignment);
+      res.json(newAssignment);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
   });
 
-  app.post("/api/courses/:courseId/assignments/new", (req, res) => {
-    const { courseId } = req.params;
-    const assignment = {
-        course: courseId,
-        title: req.body.title,
-        description: req.body.description || "",
-        points: req.body.points || 100,
-        dueDate: req.body.dueDate || "2024-05-13T23:59",
-        availableFrom: req.body.availableFrom || "2024-05-16T23:59",
-        availableUntil: req.body.availableUntil || "2024-05-20T23:59",
-    };
-    const newAssignment = assignmentsDao.createAssignment(assignment);
-    res.send(newAssignment);
-});
-
-
-
+  app.get("/api/courses/:cid/users", async (req, res) => {
+    try {
+      const { cid } = req.params;
+      const users = await enrollmentsDao.findUsersForCourse(cid);
+      res.json(users);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
 }
-
