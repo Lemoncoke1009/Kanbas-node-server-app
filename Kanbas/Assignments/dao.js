@@ -24,5 +24,3 @@ export function findAssignmentsForCourse(courseId) {
           (assignment) => assignment._id !== assignmentId
         );
       }
-
-      //final
